@@ -1,5 +1,7 @@
-import React, { useRef } from 'react';
+// src/components/MainContent.js
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
+import MusicPlayer from './MusicPlayer';
 
 const ContentContainer = styled.div`
   padding: 20px;
@@ -36,6 +38,8 @@ const Card = styled.div`
   margin: 10px;
   border-radius: 5px;
   overflow: hidden;
+  cursor: pointer;
+
   &:hover {
     opacity: 0.9;
   }
@@ -55,6 +59,7 @@ const ScrollRightButton = styled.button`
   font-size: 18px;
   cursor: pointer;
   z-index: 10;
+
   &:hover {
     background-color: rgba(0,0,0,0.8);
   }
@@ -63,12 +68,22 @@ const ScrollRightButton = styled.button`
 export default function MainContent() {
   const gridRefs = useRef([]);
 
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+
   const scrollRight = (sectionIndex) => {
     const grid = gridRefs.current[sectionIndex];
     if (grid) {
       grid.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
+
+  const tracks = [
+    { name: 'Còn gì đau hơn chữ đã từng', url: '/music/ConGiDauHonChuDaTung-QuanAP-16057075.mp3' },
+    { name: 'Đúng người đúng thời điểm', url: '/music/DungNguoiDungThoiDiem-ThanhHungIdol-6044113.mp3' },
+    { name: 'Nơi này có anh', url: '/music/NoiNayCoAnh-SonTungMTP-4772041.mp3' },
+    { name: 'Sunroof', url: '/music/Sunroof-NickyYouredazyManuelTurizo-7800844.mp3' },
+    { name: 'Vũ trụ có anh', url: '/music/VuTruCoAnh-PhuongMyChiDTAPPhao-9297066.mp3' },
+  ];
 
   const sections = [
     { title: 'Nghe gì hôm nay', images: 'artist' },
@@ -79,6 +94,12 @@ export default function MainContent() {
     { title: 'Youtube Trending', images: 'top100' },
   ];
 
+  // Hàm xử lý khi click bất kì card nào
+  const handleCardClick = () => {
+    setCurrentTrackIndex(prev => (prev + 1) % tracks.length);
+    console.log('Click bất kì card nào → phát bài mới:', tracks[(currentTrackIndex + 1) % tracks.length].name);
+  };
+
   return (
     <ContentContainer>
       {sections.map((section, sectionIndex) => (
@@ -88,10 +109,10 @@ export default function MainContent() {
             <CardGrid ref={el => (gridRefs.current[sectionIndex] = el)}>
               {[...Array(10)].map((_, itemIndex) => (
                 <CardContainer key={itemIndex}>
-                  <Card>
+                  <Card onClick={handleCardClick}>
                     <img
                       src={`/images/${section.images}${(itemIndex % 5) + 1}.jpg`}
-                      alt={`Item ${itemIndex+1}`}
+                      alt={`Item ${itemIndex + 1}`}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </Card>
@@ -104,6 +125,12 @@ export default function MainContent() {
           </CardGridWrapper>
         </div>
       ))}
+
+      <MusicPlayer
+        tracks={tracks}
+        currentTrackIndex={currentTrackIndex}
+        setCurrentTrackIndex={setCurrentTrackIndex}
+      />
     </ContentContainer>
   );
 }
