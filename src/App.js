@@ -1,39 +1,61 @@
-import React from 'react';
+// src/App.js
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import MainContent from './components/MainContent';
+import MusicPlayer from './components/MusicPlayer';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const AppContainer = styled.div`
   display: flex;
-  min-height: 100vh; /* Đảm bảo chiều cao tối thiểu bằng viewport */
-  background-color: #1a1a1a; /* Đặt background giống với thiết kế */
-  color: #fff;
-  overflow: visible;
-  
+  flex-direction: column; /* bọc dọc */
+  min-height: 100vh;
+`;
+
+const MainWrapper = styled.div`
+  display: flex;
+  flex: 1;
 `;
 
 const MainContentWrapper = styled.div`
-  margin-left: 220px; /* Độ rộng của sidebar (200px) + padding (20px) */
+  margin-left: 220px;
   padding: 20px;
   flex: 1;
-  min-height: 100vh; /* Đảm bảo chiều cao tối thiểu */
-  overflow: visible;
 `;
 
-function App() {
+export default function App() {
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+
+  const tracks = [
+    { name: 'Còn gì đau hơn chữ đã từng', url: '/music/ConGiDauHonChuDaTung-QuanAP-16057075.mp3' },
+    { name: 'Đúng người đúng thời điểm', url: '/music/DungNguoiDungThoiDiem-ThanhHungIdol-6044113.mp3' },
+    { name: 'Nơi này có anh', url: '/music/NoiNayCoAnh-SonTungMTP-4772041.mp3' },
+    { name: 'Sunroof', url: '/music/Sunroof-NickyYouredazyManuelTurizo-7800844.mp3' },
+    { name: 'Vũ trụ có anh', url: '/music/VuTruCoAnh-PhuongMyChiDTAPPhao-9297066.mp3' },
+  ];
+
   return (
     <AppContainer>
       <ErrorBoundary>
-        <Sidebar />
-        <MainContentWrapper>
-          <Header />
-          <MainContent />
-        </MainContentWrapper>
+        <MainWrapper>
+          <Sidebar />
+          <MainContentWrapper>
+            <Header />
+            <MainContent
+              tracks={tracks}
+              setCurrentTrackIndex={setCurrentTrackIndex}
+            />
+          </MainContentWrapper>
+        </MainWrapper>
+
+        {/* ✅ Player cố định luôn hiển thị */}
+        <MusicPlayer
+          tracks={tracks}
+          currentTrackIndex={currentTrackIndex}
+          setCurrentTrackIndex={setCurrentTrackIndex}
+        />
       </ErrorBoundary>
     </AppContainer>
   );
 }
-
-export default App;
